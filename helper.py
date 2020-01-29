@@ -64,7 +64,7 @@ class log():
     # logfile open and data non-empty
     if logfile and data:
       try:
-        logfile.write(data)
+        logfile.write(bytes(data, "utf-8"))
       except IOError as e:
         output().errmsg("Cannot log", e)
 
@@ -384,15 +384,15 @@ class conn(object):
     if self.debug: output().send(self.beautify(data), self.debug)
     # send data to device
     if self._file: return os.write(self._file, data)
-    # send data to socket
-    elif self._sock: return self._sock.sendall(data)
+    # send data to socket (encode it before)
+    elif self._sock: return self._sock.sendall(bytes(data, "utf-8"))
 
   # receive data
   def recv(self, bytes):
     # receive data from device
     if self._file: data = os.read(self._file, bytes)
-    # receive data from socket
-    else: data = self._sock.recv(bytes)
+    # receive data from socket and decode it
+    else: data = self._sock.recv(bytes).decode("utf-8")
     # output recv data when in debug mode
     if self.debug: output().recv(self.beautify(data), self.debug)
 
