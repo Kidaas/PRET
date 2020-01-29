@@ -85,7 +85,7 @@ class postscript(printer):
         # break on postscript error message
         if re.search(c.PS_FLUSH, str_recv): break
         # fetch user input and send it to postscript shell
-        self.send(raw_input("") + "\n")
+        self.send(input("") + "\n")
     # handle CTRL+C and exceptions
     except (EOFError, KeyboardInterrupt) as e:
       pass
@@ -97,7 +97,7 @@ class postscript(printer):
   def vol_exists(self, vol=''):
     if vol: vol = '%' + vol.strip('%') + '%'
     str_recv = self.cmd('/str 128 string def (*)'
-             + '{print (\\n) print} str devforall')
+             + '{print(\\n) print} str devforall')
     vols = str_recv.splitlines() + ['%*%']
     if vol: return vol in vols # return availability
     else: return vols # return list of existing vols
@@ -148,7 +148,7 @@ class postscript(printer):
   def find(self, path):
     str_send = '{false statusdict /setfilenameextend get exec} stopped\n'\
                '/str 256 string def (' + path + ') '\
-               '{print (\\n) print} str filenameforall'
+               '{print(\\n) print} str filenameforall'
     return self.timeoutcmd(str_send, self.timeout * 2, False)
 
   # ------------------------[ ls <path> ]-------------------------------
@@ -193,7 +193,7 @@ class postscript(printer):
   def do_mkdir(self, arg):
     "Create remote directory:  mkdir <path>"
     if not arg:
-      arg = raw_input("Directory: ")
+      arg = input("Directory: ")
     # writing to dir/file should automatically create dir/
     # .dirfile is not deleted as empty dirs are not listed
     self.put(self.rpath(arg) + c.SEP + '.dirfile', '')
@@ -296,17 +296,17 @@ class postscript(printer):
     output().info(self.cmd('currentsystemparams dup dup dup\n'
                          + '/mb 1048576 def /kb 100 def /str 32 string def\n'
                          + '(size:   ) print /InstalledRam known {\n'
-                         + '  /InstalledRam get dup mb div cvi str cvs print (.) print kb mod cvi str cvs print (M\\n) print}{pop (Not available\\n) print\n'
+                         + '  /InstalledRam get dup mb div cvi str cvs print(.) print kb mod cvi str cvs print(M\\n) print}{pop (Not available\\n) print\n'
                          + '} ifelse\n'
                          + '(free:   ) print /RamSize known {\n'
-                         + '  /RamSize get dup mb div cvi str cvs print (.) print kb mod cvi str cvs print (M\\n) print}{pop (Not available\\n) print\n'
+                         + '  /RamSize get dup mb div cvi str cvs print(.) print kb mod cvi str cvs print(M\\n) print}{pop (Not available\\n) print\n'
                          + '} ifelse'))
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     output().raw("Virtual memory")
     output().info(self.cmd('vmstatus\n'
                          + '/mb 1048576 def /kb 100 def /str 32 string def\n'
-                         + '(max:    ) print dup mb div cvi str cvs print (.) print kb mod cvi str cvs print (M\\n) print\n'
-                         + '(used:   ) print dup mb div cvi str cvs print (.) print kb mod cvi str cvs print (M\\n) print\n'
+                         + '(max:    ) print dup mb div cvi str cvs print(.) print kb mod cvi str cvs print(M\\n) print\n'
+                         + '(used:   ) print dup mb div cvi str cvs print(.) print kb mod cvi str cvs print(M\\n) print\n'
                          + '(level:  ) print =='))
     #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     output().raw("Font cache")
@@ -332,11 +332,11 @@ class postscript(printer):
   # ------------------------[ devices ]---------------------------------
   def do_devices(self, arg):
     "Show available I/O devices."
-    str_send = '/str 128 string def (*) {print (\\n) print} str /IODevice resourceforall'
+    str_send = '/str 128 string def (*) {print(\\n) print} str /IODevice resourceforall'
     for dev in self.cmd(str_send).splitlines():
       output().info(dev)
       output().raw(self.cmd('(' + dev + ') currentdevparams {exch 128 string '
-                          + 'cvs print (: ) print ==} forall') + os.linesep)
+                          + 'cvs print(: ) print ==} forall') + os.linesep)
 
   # ------------------------[ uptime ]----------------------------------
   def do_uptime(self, arg):
@@ -368,7 +368,7 @@ class postscript(printer):
   def do_lock(self, arg):
     "Set startjob and system parameters password."
     if not arg:
-      arg = raw_input("Enter password: ")
+      arg = input("Enter password: ")
     self.cmd('<< /Password () '
              '/SystemParamsPassword (' + arg + ') ' # harmless settings
              '/StartJobPassword (' + arg + ') '     # alter initial vm!
@@ -488,7 +488,7 @@ class postscript(printer):
                        '  value count ' + cycles + ' eq {exit} if\n'
                        '} loop', False)
         self.chitchat("\rNVRAM write cycles: " + str(n*int(cycles)), '')
-      print # echo newline if we get this far
+      print() # echo newline if we get this far
 
   # ------------------------[ hang ]------------------------------------
   def do_hang(self, arg):
@@ -503,7 +503,7 @@ class postscript(printer):
   # ------------------------[ overlay <file> ]--------------------------
   def do_overlay(self, arg):
     "Put overlay image on all hard copies:  overlay <file>"
-    if not arg: arg = raw_input('File: ')
+    if not arg: arg = input('File: ')
     if arg.endswith('ps'): data = file().read(arg) # already ps/eps file
     else:
       self.chitchat("For best results use a file from the overlays/ directory")
@@ -545,7 +545,7 @@ class postscript(printer):
     print("Put printer graffiti on all hard copies:  cross <font> <text>")
     print("Read the docs on how to install custom fonts. Available fonts:")
     if len(self.options_cross) > 0: last = sorted(self.options_cross)[-1]
-    for font in sorted(self.options_cross): print(('└─ ' if font == last else '├─ ') + font)
+    for font in sorted(self.options_cross): print((('└─ ' if font == last else '├─ ') + font))
 
   fontdir = os.path.dirname(os.path.realpath(__file__))\
           + os.path.sep + 'fonts' + os.path.sep
@@ -653,12 +653,12 @@ class postscript(printer):
         '{ exch realtime sub (Date: ) print == dup          % get time diff\n'
         '  resetfile (Size: ) print dup bytesavailable ==   % get file size\n'
         '  100 {dup 128 string readline {(%%) anchorsearch  % get metadata\n'
-        '  {exch print (\\n) print} if pop}{pop exit} ifelse} repeat pop\n'
+        '  {exch print(\\n) print} if pop}{pop exit} ifelse} repeat pop\n'
         '  (' + c.DELIMITER + '\\n) print\n'
         '} forall clear} if')
       # grep for metadata in captured jobs
       jobs = []
-      for val in filter(None, str_recv.split(c.DELIMITER)):
+      for val in [_f for _f in str_recv.split(c.DELIMITER) if _f]:
         date = conv().timediff(item(re.findall('Date: (.*)', val)))
         size = conv().filesize(item(re.findall('Size: (.*)', val)))
         user = item(re.findall('For: (.*)', val))
@@ -691,7 +691,7 @@ class postscript(printer):
             '(%stdout) (w) file byte writestring}\n'
             '{exit} ifelse} loop')
           data = conv().nstrip(data) # remove carriage return chars
-          print(str(len(data)) + " bytes received.")
+          print((str(len(data)) + " bytes received."))
           # write to local file
           if lpath and data: file().write(lpath, data)
       # be user-friendly and show some info on how to open captured jobs
@@ -707,7 +707,7 @@ class postscript(printer):
        '/str 256 string def /count 0 def\n'
        '/increment {/count 1 count add def} def\n'
        '/msg {(Reprinting recorded job ) print count str\n'
-       'cvs print ( of ) print total str cvs print (\\n) print} def\n'
+       'cvs print( of ) print total str cvs print(\\n) print} def\n'
        'userdict /capturedict known {/total capturedict length def\n'
        'capturedict {increment msg dup resetfile cvx exec} forall} if\n'
        'count 0 eq {(No jobs captured) print} if'))
@@ -847,7 +847,7 @@ class postscript(printer):
     # print("If <dict> is empty, the whole dictionary stack is dumped.")
     print("Standard PostScript dictionaries:")
     if len(self.options_dump) > 0: last = self.options_dump[-1]
-    for dict in self.options_dump: print(('└─ ' if dict == last else '├─ ') + dict)
+    for dict in self.options_dump: print((('└─ ' if dict == last else '├─ ') + dict))
 
   # undocumented ... what about proprietary dictionary names?
   options_dump = ('systemdict', 'statusdict', 'userdict', 'globaldict',
@@ -952,7 +952,7 @@ class postscript(printer):
   def clean_json(self, string):
     string = re.sub(",[ \t\r\n]+}", "}", string)
     string = re.sub(",[ \t\r\n]+\]", "]", string)
-    return unicode(string, errors='ignore')
+    return str(string, errors='ignore')
 
   # ------------------------[ resource <category> [dump] ]--------------
   def do_resource(self, arg):
@@ -960,7 +960,7 @@ class postscript(printer):
     cat, dump = arg[0], len(arg) > 1
     self.populate_resource()
     if cat in self.options_resource:
-      str_send = '(*) {128 string cvs print (\\n) print}'\
+      str_send = '(*) {128 string cvs print(\\n) print}'\
                  ' 128 string /' + cat + ' resourceforall'
       items = self.cmd(str_send).splitlines()
       for item in sorted(items):
@@ -974,7 +974,7 @@ class postscript(printer):
     print("List or dump PostScript resource:  resource <category> [dump]")
     print("Available resources on this device:")
     if len(self.options_resource) > 0: last = sorted(self.options_resource)[-1]
-    for res in sorted(self.options_resource): print(('└─ ' if res == last else '├─ ') + res)
+    for res in sorted(self.options_resource): print((('└─ ' if res == last else '├─ ') + res))
 
   options_resource = []
   def complete_resource(self, text, line, begidx, endidx):
@@ -983,7 +983,7 @@ class postscript(printer):
   # retrieve available resources
   def populate_resource(self):
     if not self.options_resource:
-      str_send = '(*) {print (\\n) print} 128 string /Category resourceforall'
+      str_send = '(*) {print(\\n) print} 128 string /Category resourceforall'
       self.options_resource = self.cmd(str_send).splitlines()
 
   # ------------------------[ set <key=value> ]-------------------------
@@ -1010,7 +1010,7 @@ class postscript(printer):
   def do_config(self, arg):
     arg = re.split("\s+", arg, 1)
     (arg, val) = tuple(arg) if len(arg) > 1 else (arg[0], None)
-    if arg in self.options_config.keys():
+    if arg in list(self.options_config.keys()):
       key = self.options_config[arg]
       if arg == 'copies' and not val: return self.help_config()
       output().psonly()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 ########################################################################
@@ -60,7 +60,7 @@ args = usage()
 # get lpd acknowledgement
 def check_acknowledgement():
   if s.recv(4096) != "\000":
-	print "Negative acknowledgement"
+	print("Negative acknowledgement")
 	s.send("\001\n") # [ RFC 1179 | 6.1 01 - Abort job ]
 	s.close()
 	sys.exit()
@@ -95,30 +95,30 @@ getname  = datafile # default name of file to print
 if args.mode == 'get':
   getname = args.argument
   data += " If you can read this, the test failed."
-  print "[get] Trying to print file " + args.argument
+  print("[get] Trying to print file " + args.argument)
 
 elif args.mode == 'put':
   ctrlfile = args.argument
   datafile = args.argument
-  print "[put] Trying to write to file " + args.argument
+  print("[put] Trying to write to file " + args.argument)
 
 elif args.mode == 'rm':
   delname = args.argument
-  print "[rm] Trying to delete file " + args.argument
+  print("[rm] Trying to delete file " + args.argument)
 
 elif args.mode == 'in':
   hostname = username = ctrlfile = datafile  = delname  = jobname \
            = srcfile  = jobtitle = classname = mailname = args.argument
-  print "[in] Trying to send user input '" + args.argument + "'"
+  print("[in] Trying to send user input '" + args.argument + "'")
 
 elif args.mode == 'mail':
   try:
     mailname = args.argument.split('@', 1)[0]
     hostname = args.argument.split('@', 1)[1]
   except Exception as e:
-    print "Bad argument" + str(e)
+    print("Bad argument" + str(e))
     sys.exit()
-  print "[mail] Trying to send job information to " + args.argument
+  print("[mail] Trying to send job information to " + args.argument)
 
 # --------[ RFC 1179 | 6.2 02 - Receive control file ]------------------
 

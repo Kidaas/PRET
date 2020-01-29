@@ -92,7 +92,7 @@ RFC 1179 specifies a maximum length for user-/hostnames
 or job titles (79 bytes). To crash various HP LaserJet
 printers, use something like this:
 
-$ lpdtest printer in "`python -c 'print "x"*100'`"
+$ lpdtest printer in "`python -c 'print("x"*100)'`"
 
 ----------------------[ 'mail Test ]----------------------
 

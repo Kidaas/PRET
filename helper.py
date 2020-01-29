@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # python standard library
-from __future__ import print_function
+
 from socket import socket
 import sys, os, re, stat, math, time, datetime
 
@@ -45,7 +45,7 @@ def item(mylist, alternative=""):
 
 # split list into chunks of equal size
 def chunks(l, n):
-  for i in xrange(0, len(l), n):
+  for i in range(0, len(l), n):
     yield l[i:i+n]
 
 # ----------------------------------------------------------------------
@@ -127,7 +127,8 @@ class output():
     if msg: print(Back.RED + msg + info)
 
   # show printer and status
-  def discover(self, (ipaddr, (device, uptime, status, prstat))):
+  def discover(self, arguments):
+    (ipaddr, (device, uptime, status, prstat)) = arguments
     ipaddr = output().strfit(ipaddr, 15)
     device = output().strfit(device, 27)
     uptime = output().strfit(uptime,  8)
@@ -149,7 +150,7 @@ class output():
 
   # show directory listing
   def psdir(self, isdir, size, mtime, name, otime):
-    otime = Style.DIM + "(created " + otime + ")" + Style.RESET_ALL 
+    otime = Style.DIM + "(created " + otime + ")" + Style.RESET_ALL
     vol = Style.DIM + Fore.YELLOW + item(re.findall("^(%.*%)", name)) + Style.RESET_ALL
     name = re.sub("^(%.*%)", '', name) # remove volume information from filename
     name = Style.BRIGHT + Fore.BLUE + name + Style.RESET_ALL if isdir else name
@@ -184,7 +185,8 @@ class output():
       self.info("%-35s %-12s %-7s %-7s %-7s" % ((path, cmd) + opt))
 
   # show captured jobs
-  def joblist(self, (date, size, user, name, soft)):
+  def joblist(self, arguments):
+    (date, size, user, name, soft) = arguments
     user = output().strfit(user, 13)
     name = output().strfit(name, 22)
     soft = output().strfit(soft, 20)
@@ -215,7 +217,7 @@ class output():
     if isinstance(data, list):
       data = dict(enumerate(data))
     # data now is expected to be a dictionary
-    if len(data.keys()) > 0: last = sorted(data.keys())[-1]
+    if len(list(data.keys())) > 0: last = sorted(data.keys())[-1]
     for key, val in sorted(data.items()):
       type  = val['type'].replace('type', '')
       value = val['value']
@@ -247,7 +249,7 @@ class output():
   def countdown(self, msg, sec, cmd):
     try:
       sys.stdout.write(msg)
-      for x in reversed(range(1, sec+1)):
+      for x in reversed(list(range(1, sec+1))):
         sys.stdout.write(" " + str(x))
         sys.stdout.flush()
         time.sleep(1)
@@ -299,7 +301,7 @@ class conv():
     num = self.int(num)
     for unit in ['B','K','M']:
       if abs(num) < 1024.0:
-        return (("%4.1f%s" if unit == 'M' else "%4.0f%s") % (num, unit)) 
+        return (("%4.1f%s" if unit == 'M' else "%4.0f%s") % (num, unit))
       num /= 1024.0
 
   # remove carriage return from line breaks
@@ -393,6 +395,7 @@ class conn(object):
     else: data = self._sock.recv(bytes)
     # output recv data when in debug mode
     if self.debug: output().recv(self.beautify(data), self.debug)
+
     return data
 
   # so-many-seconds-passed bool condition
@@ -512,11 +515,11 @@ class const(): # define constants
   PS_SUPER    = '\n1183615869 internaldict /superexec get exec'
   PS_NOHOOK   = '/nohook true def\n'
   PS_IOHACK   = '/print {(%stdout) (w) file dup 3 2 roll writestring flushfile} def\n'\
-                '/== {128 string cvs print (\\n) print} def\n'
+                '/== {128 string cvs print(\\n) print} def\n'
   PCL_HEADER  = '@PJL ENTER LANGUAGE = PCL' + EOL + ESC
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   SUPERBLOCK  = '31337' # define super macro id to contain pclfs table
-  BLOCKRANGE  = range(10000,20000) # use those macros for file content
+  BLOCKRANGE  = list(range(10000,20000)) # use those macros for file content
   FILE_EXISTS = -1 # file size to be returned if file/dir size unknown
   NONEXISTENT = -2 # file size to be returned if a file does not exist
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
