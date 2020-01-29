@@ -10,7 +10,7 @@ The main idea of PRET is to facilitate the communication between the end-user an
 
 ### Installation
 
-PRET only requires a Python2 interpreter. For colored output and SNMP support however, third party modules need to be installed:
+PRET only requires a Python3 interpreter. For colored output and SNMP support however, third party modules need to be installed:
 
     # pip install colorama pysnmp
 
@@ -69,7 +69,7 @@ The printer language to be abused must be one of `ps`, `pjl` or `pcl`. Not all l
 
 `--quit` suppresses printer model determination, intro message and some other chit-chat.
 
-`--debug` shows the datastream actually sent to the device and the feedback received. Note that header data and other overhead is filtered. The see the whole traffic, use wireshark. Debugging can also be switched on/off within a PRET session using the `debug` command 
+`--debug` shows the datastream actually sent to the device and the feedback received. Note that header data and other overhead is filtered. The see the whole traffic, use wireshark. Debugging can also be switched on/off within a PRET session using the `debug` command
 
 `--load filename` reads and executes PRET commands from a text file. This is usefull for automation. Command files can also be invoked later within a PRET session via the `load` command.
 
@@ -205,7 +205,7 @@ dicts      Return a list of dictionaries and their permissions.
 resource   List or dump PostScript resource:  resource <category> [dump]
 
 dump       Dump dictionary:  dump <dict>
-  Dictionaries: - systemdict - statusdict - userdict 
+  Dictionaries: - systemdict - statusdict - userdict
                 - globaldict - serverdict - errordict
                 - internaldict - currentsystemparams
                 - currentuserparams - currentpagedevice
